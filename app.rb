@@ -12,12 +12,14 @@ class App < Sinatra::Base
 
   MYSQL_DUP_ENTRY_ERROR = 1062
 
-  settings = Config.new.database_settings
   uid_generator = UidGenerator.new
 
+  db = EventMachine::Synchrony::ConnectionPool.new(size: 25) do
+    Mysql2::EM::Client.new(Config.new.database_settings)
+  end
+
   get '/:uid' do |uid|
-    client = Mysql2::EM::Client.new(settings)
-    res = client.query("SELECT url from urls where id = '#{uid}'")
+    res = db.query("SELECT url from urls where id = '#{uid}'")
 
     if res.count > 0
       redirect res.first['url'], 301
@@ -31,11 +33,9 @@ class App < Sinatra::Base
     body = JSON.parse(request.body.read)
     longUrl = body["longUrl"]
     if longUrl && longUrl.size > 0
-      client = Mysql2::EM::Client.new(settings)
-
       begin
         uid = uid_generator.generate
-        res = client.query("INSERT INTO urls (id, url) values ('#{uid}', '#{longUrl}')")
+        res = db.query("INSERT INTO urls (id, url) values ('#{uid}', '#{longUrl}')")
 
         content_type :json
         body({ url: "#{request.base_url}/#{uid}" }.to_json)
