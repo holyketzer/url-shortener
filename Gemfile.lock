@@ -21,6 +21,8 @@ GEM
     mysql2 (0.3.18)
     public_suffix (2.0.3)
     rack (1.6.4)
+    rack-attack (4.4.1)
+      rack
     rack-fiber_pool (0.9.3)
     rack-protection (1.5.3)
       rack
@@ -47,6 +49,7 @@ PLATFORMS
 
 DEPENDENCIES
   mysql2
+  rack-attack
   sanitize-url
   sinatra
   sinatra-synchrony

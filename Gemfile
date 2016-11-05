@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'sinatra'
 gem 'sinatra-synchrony'
 gem 'sanitize-url'
+gem 'rack-attack'
 
 # Web-server
 

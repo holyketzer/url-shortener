@@ -1,6 +1,8 @@
+Minimalistic URL shortener service
+
 # Setup
 
-Required MySQL database server
+MySQL database server required
 
     bundle
     ruby bin/setup_database.rb

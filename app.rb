@@ -17,8 +17,9 @@ class App < Sinatra::Base
 
   uid_generator = UidGenerator.new
 
-  db = EventMachine::Synchrony::ConnectionPool.new(size: 25) do
-    Mysql2::EM::Client.new(Config.new.database_settings)
+  database_settings = Config.new.database_settings
+  db = EventMachine::Synchrony::ConnectionPool.new(size: database_settings['pool_size']) do
+    Mysql2::EM::Client.new(database_settings)
   end
 
   get '/:uid' do |uid|
