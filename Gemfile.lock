@@ -24,6 +24,7 @@ GEM
     rack-fiber_pool (0.9.3)
     rack-protection (1.5.3)
       rack
+    sanitize-url (0.1.4)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -46,6 +47,7 @@ PLATFORMS
 
 DEPENDENCIES
   mysql2
+  sanitize-url
   sinatra
   sinatra-synchrony
   thin

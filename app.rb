@@ -1,6 +1,7 @@
 require "em-synchrony"
 require "em-synchrony/mysql2"
 require "json"
+require "sanitize-url"
 require "sinatra/base"
 require "sinatra/synchrony"
 
@@ -8,6 +9,8 @@ require "./config"
 require './uid_generator'
 
 class App < Sinatra::Base
+  include SanitizeUrl
+
   register Sinatra::Synchrony
 
   MYSQL_DUP_ENTRY_ERROR = 1062
@@ -19,7 +22,7 @@ class App < Sinatra::Base
   end
 
   get '/:uid' do |uid|
-    res = db.query("SELECT url from urls where id = '#{uid}'")
+    res = db.query("SELECT url from urls where id = '#{db.escape(uid)}'")
 
     if res.count > 0
       redirect res.first['url'], 301
@@ -35,6 +38,7 @@ class App < Sinatra::Base
     if longUrl && longUrl.size > 0
       begin
         uid = uid_generator.generate
+        longUrl = db.escape(sanitize_url(longUrl))
         res = db.query("INSERT INTO urls (id, url) values ('#{uid}', '#{longUrl}')")
 
         content_type :json
