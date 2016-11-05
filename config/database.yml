@@ -1,0 +1,4 @@
+database: url_shortener_development
+host: localhost
+username: root
+encoding: utf8
