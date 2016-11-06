@@ -35,12 +35,12 @@ class App < Sinatra::Base
 
   post '/' do
     body = JSON.parse(request.body.read)
-    longUrl = body["longUrl"]
-    if longUrl && longUrl.size > 0
+    long_url = db.escape(sanitize_url(body["longUrl"] || ""))
+
+    if long_url =~ /http(s)?\:\/\/.+/
       begin
         uid = uid_generator.generate
-        longUrl = db.escape(sanitize_url(longUrl))
-        res = db.query("INSERT INTO urls (id, url) values ('#{uid}', '#{longUrl}')")
+        res = db.query("INSERT INTO urls (id, url) values ('#{uid}', '#{long_url}')")
 
         content_type :json
         body({ url: "#{request.base_url}/#{uid}" }.to_json)
@@ -53,7 +53,7 @@ class App < Sinatra::Base
       end
     else
       status 400
-      body 'longUrl parameter required'
+      body 'longUrl parameter invalid or empty'
     end
   end
 end
